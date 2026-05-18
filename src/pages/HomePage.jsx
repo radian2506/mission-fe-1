@@ -1,9 +1,35 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import Navbar from "../components/Navbar";
+import WatchList from "../components/WatchList";
+import { initialNavItems, initialWatchList } from "../data/homeData";
 
 export default function HomePage() {
   const [activeNav, setActiveNav] = useState("Series");
-  const navItems = ["Series", "Film", "Daftar Baru", "Genre"];
+  const [watchList, setWatchList] = useState(initialWatchList);
+  const handleAdd = () => {
+    const newItem = {
+      id: Date.now(),
+      title: "Film Baru",
+      badge: "Episode Baru",
+      gradient: "linear-gradient(135deg, #0a0a2a, #1a1a0a)",
+      bottomLabel: "Film Baru",
+    };
+    setWatchList((prev) => [...prev, newItem]);
+  };
+
+  const handleUpdate = (id) => {
+    setWatchList((prev) =>
+      prev.map((item) =>
+        item.id === id
+          ? { ...item, bottomLabel: item.bottomLabel + " ✓" }
+          : item,
+      ),
+    );
+  };
+
+  const handleDelete = (id) => {
+    setWatchList((prev) => prev.filter((item) => item.id !== id));
+  };
 
   return (
     <div
@@ -16,85 +42,11 @@ export default function HomePage() {
       }}
     >
       {/* Navbar */}
-      <nav
-        style={{
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "space-between",
-          padding: "1.2rem 3rem",
-          borderBottom: "1px solid #1e1e2a",
-          background: "rgba(10,10,15,0.95)",
-        }}
-      >
-        <span
-          style={{
-            fontFamily: "Bebas Neue, sans-serif",
-            fontSize: "2rem",
-            color: "#e63946",
-            letterSpacing: 2,
-          }}
-        >
-          Chill
-        </span>
-        <div style={{ display: "flex", gap: "2rem", fontSize: "0.88rem" }}>
-          {navItems.map((item) => (
-            <span
-              key={item}
-              onClick={() => setActiveNav(item)}
-              style={{
-                cursor: "pointer",
-                transition: "color 0.2s",
-                color: activeNav === item ? "#f0eff4" : "#8b8a94",
-              }}
-            >
-              {item}
-            </span>
-          ))}
-        </div>
-        <div style={{ display: "flex", gap: "0.8rem", alignItems: "center" }}>
-          <Link to="/login">
-            <button
-              style={{
-                background: "transparent",
-                border: "1px solid #2a2a38",
-                color: "#8b8a94",
-                padding: "0.4rem 1.2rem",
-                borderRadius: 6,
-                fontSize: "0.85rem",
-                cursor: "pointer",
-                fontFamily: "DM Sans, sans-serif",
-                transition: "all 0.2s",
-              }}
-              onMouseEnter={(e) => {
-                e.target.style.borderColor = "#e63946";
-                e.target.style.color = "#f0eff4";
-              }}
-              onMouseLeave={(e) => {
-                e.target.style.borderColor = "#2a2a38";
-                e.target.style.color = "#8b8a94";
-              }}
-            >
-              Masuk
-            </button>
-          </Link>
-          <Link to="/register">
-            <button
-              style={{
-                background: "#e63946",
-                border: "none",
-                color: "#fff",
-                padding: "0.4rem 1.2rem",
-                borderRadius: 6,
-                fontSize: "0.85rem",
-                cursor: "pointer",
-                fontFamily: "DM Sans, sans-serif",
-              }}
-            >
-              Daftar
-            </button>
-          </Link>
-        </div>
-      </nav>
+      <Navbar
+        navItems={initialNavItems}
+        activeNav={activeNav}
+        onNavClick={setActiveNav}
+      />
 
       {/* Hero Section */}
       <div
@@ -367,70 +319,12 @@ export default function HomePage() {
               >
                 Melanjutkan Tonton Film
               </div>
-              <div style={{ display: "flex", gap: 6, padding: "0 10px 12px" }}>
-                <div
-                  style={{
-                    flex: 1,
-                    height: 50,
-                    borderRadius: 6,
-                    background: "linear-gradient(135deg, #1a0808, #0a0a1a)",
-                    border: "1px solid #2a2a38",
-                    position: "relative",
-                    overflow: "hidden",
-                  }}
-                >
-                  <span
-                    style={{
-                      position: "absolute",
-                      top: 3,
-                      left: 4,
-                      fontSize: 5,
-                      background: "#e63946",
-                      color: "#fff",
-                      padding: "1px 3px",
-                      borderRadius: 2,
-                    }}
-                  >
-                    Episode Baru
-                  </span>
-                  <span
-                    style={{
-                      position: "absolute",
-                      bottom: 3,
-                      left: 4,
-                      fontSize: 6,
-                      color: "#ddd",
-                      fontWeight: 600,
-                    }}
-                  >
-                    Alice in Borderland
-                  </span>
-                </div>
-                <div
-                  style={{
-                    flex: 1,
-                    height: 50,
-                    borderRadius: 6,
-                    background: "linear-gradient(135deg, #0a1a08, #1a0a1a)",
-                    border: "1px solid #2a2a38",
-                    position: "relative",
-                    overflow: "hidden",
-                  }}
-                >
-                  <span
-                    style={{
-                      position: "absolute",
-                      bottom: 3,
-                      left: 4,
-                      fontSize: 6,
-                      color: "#ddd",
-                      fontWeight: 600,
-                    }}
-                  >
-                    IN BORDERLAND
-                  </span>
-                </div>
-              </div>
+              <WatchList
+                watchList={watchList}
+                onAdd={handleAdd}
+                onUpdate={handleUpdate}
+                onDelete={handleDelete}
+              />
             </div>
           </div>
         </div>
